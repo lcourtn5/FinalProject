@@ -1,0 +1,17 @@
+Megan Stanton
+
+Challenge 8
+
+Rubric
+
+
+
+
++10 Develop Level Implementation
+
++10 Develop Models for Characters
+
++10 Implement Models in Game
+
++10 Compiles
+ 

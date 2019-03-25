@@ -1,0 +1,4 @@
+15 pts. Initial window setup
+10 pts. Loading of the game menu
+10 pts. Correctly integrate other team members' work
+5  pts. Compiles

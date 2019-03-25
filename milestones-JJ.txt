@@ -1,0 +1,22 @@
+
+Name: Jaidin Jackson 
+Challenge 8 
+Description: Contains a time log of my time put into the final project, a rubric
+specifying my personal goals for the project by the end of this week, a reflection
+on my accomplishments throughout the week, and a link to our github final project 
+repository. 
+
+Repository: https://github.com/lcourtn5/FinalProject.git 
+
+Time table: 
+	Monday: 2 hours in lab 
+	Wednesday: (2 hour goal)
+	Thursday: (2 hour goal)
+
+Rubric: 
+	+15 implementing characters
+	+15 implementing sounds 
+	+10 compiles
+
+Short report/reflection: 
+

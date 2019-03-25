@@ -7,6 +7,11 @@ Rubric
 
 
 
+Time Table:
+Monday: 2 hrs in Lab
+
+
+
 +10 Develop Level Implementation
 
 +10 Develop Models for Characters

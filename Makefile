@@ -1,8 +1,8 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = game.cpp
+OBJS = tutorial.cpp
 
 #OBJ_NAME specifies the name of our executable
-OBJ_NAME = game
+OBJ_NAME = tutorial
 
 #This is the target that compiles our executable
 all : $(OBJS)

@@ -4,14 +4,6 @@ Challenge 8
 
 Rubric
 
-
-
-
-Time Table:
-Monday: 2 hrs in Lab
-
-
-
 +20 Develop Level Implementation
 
 +10 Determine Collision Proticol

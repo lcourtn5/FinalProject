@@ -1,9 +1,8 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = tutorial.cpp
+OBJS = game.cpp window.h
 
-#OBJ_NAME specifies the name of our executable
-OBJ_NAME = tutorial
+game: game.o
+	g++ game.o -w -lSDL2 -lSDL2_image -o game
 
-#This is the target that compiles our executable
-all : $(OBJS)
-		g++ $(OBJS) -w -lSDL2 -o $(OBJ_NAME)
+game.o : $(OBJS)
+		g++ -c $(OBJS) -w -lSDL2 -lSDL2_image

@@ -19,6 +19,8 @@ SDL_Surface* gCurrentSurface = NULL;
 
 SDL_Surface* loadSurface(string path);
 
+void credits();
+
 bool init() {
 	//Initialization flag
 	bool success = true;
@@ -68,10 +70,6 @@ void close(SDL_Surface* cSurface) {
 	SDL_FreeSurface(cSurface);
 	cSurface = NULL;
 
-	//Destroy window
-	SDL_DestroyWindow(gWindow);
-	gWindow = NULL;
-
 	//Make sure to put SDL_Quit at the end of main game
 }
 
@@ -95,4 +93,10 @@ SDL_Surface* loadSurface(string path) {
 	}
 
 	return optimizedSurface;
+}
+
+void credits() {
+	while(true) {
+
+	}
 }

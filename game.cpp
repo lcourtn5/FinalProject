@@ -28,6 +28,35 @@ void windowUpdate() {
 	SDL_UpdateWindowSurface(gWindow);
 }
 
+void PlayGame(){
+	myTextures["background"] = "background.png";
+	textureName = "background";
+	windowUpdate();
+	bool back = 0;
+	SDL_Event e;
+	while(back != 1){
+		while(SDL_PollEvent(&e) != 0){
+			if(e.type == SDL_MOUSEBUTTONDOWN){
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+			
+				//check if mouse is in back button in credits
+				if(x < 100 && x > 0){
+					if(y < 100 && y > 0 ){
+						x = 0;
+						y = 0;
+						//Back to menu
+						textureName = "menu";
+						windowUpdate();
+						back = 1;
+					}
+				}	
+			}
+		}	
+	}
+}
+
+
 //Main Menu
 int main(int argc, char* argv[]) {
 	myTextures["menu"] = "menu.png";
@@ -62,7 +91,9 @@ int main(int argc, char* argv[]) {
 						//Check if mouse if in the play button
 						if(x < 779 && x > 482) {
 							if(y < 632 && y > 533) {
-
+								x = 0;
+								y = 0;
+								PlayGame();
 							}
 						}
 
@@ -100,7 +131,7 @@ int main(int argc, char* argv[]) {
 							}
 						}
 					}
-
+					
 					gCurrentSurface = loadSurface(myTextures[textureName]);
 				}
 

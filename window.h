@@ -2,7 +2,7 @@
 #include <SDL2_image/SDL_image.h>
 #include <cstdio>
 #include <string>
-
+#include <vector>
 using namespace std;
 
 const int SCREEN_WIDTH = 1099;
@@ -55,8 +55,13 @@ LTexture gBGTexture;
 LTexture gDogTexture;
 LTexture menu;
 LTexture credits;
-LTexture cat;
+vector<LTexture> cats;
 LTexture DogJump;
+LTexture BeginPrompt;
+LTexture OKButton;
+LTexture BackButton;
+LTexture RaisinWalk;
+
 
 bool init() {
 	//Initialization flag
@@ -68,7 +73,7 @@ bool init() {
 		success = false;
 	} else {
 		//Create window
-		gWindow = SDL_CreateWindow("/*Insert Game Name*/", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		gWindow = SDL_CreateWindow("Raisin Run", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		
 		if(gWindow == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -103,36 +108,55 @@ bool init() {
 bool loadMedia(string file) {
 	//Loading success flag
 	bool success = true;
-
+	cats.resize(3);
 	if(!menu.loadFromFile(file)){
 		printf("fail to load background texture\n");
 		success = false;
 	}
-	
-	if(!credits.loadFromFile("Credits.PNG")){
+	if(!credits.loadFromFile("Pictures/Credits.PNG")){
 		printf("fail to load background texture\n");
 		success = false;
 	}	
-
-	if(!gBGTexture.loadFromFile("background.png")){
+	if(!gBGTexture.loadFromFile("Pictures/background.png")){
 		printf("failed to load background texture\n" );
 		success = false;
 	}
-	
-	if(!gDogTexture.loadFromFile("RaisinFullBody.png")){
+	if(!gDogTexture.loadFromFile("Pictures/RaisinFullBody.png")){
 		printf("failed to load dog texture\n");
 		success = false;
 	}
-	
-	if(!cat.loadFromFile("cat.png")){
+	if(!cats[0].loadFromFile("Pictures/cat.png")){
 		printf("failed to load cat texture\n");
 		success = false;
 	}	
-	if(!DogJump.loadFromFile("RaisinJumping.png")){
+	if(!cats[1].loadFromFile("Pictures/cat2.png")){
+		printf("failed to load second cat texture\n");
+		success = false;
+	}
+	if(!cats[2].loadFromFile("Pictures/cat3.png")){
+		printf("failed to load third cat texture\n");
+		success = false;
+	}
+	if(!DogJump.loadFromFile("Pictures/RaisinJumping.png")){
 		printf("failed to load jump texture\n");
 		success = false;
+	}
+	if(!BeginPrompt.loadFromFile("Pictures/BeginPrompt.png")){
+		printf("failed to load begin prompt texture\n");
+		success = false;
+	}
+	if(!OKButton.loadFromFile("Pictures/OKButton.png")){
+		printf("failed to load OK Button texture\n");
+		success = false;
+	}
+	if(!BackButton.loadFromFile("Pictures/BackButton.png")){
+		printf("failed to load Back Button texture\n");
+		success = false;
+	}
+	if(!RaisinWalk.loadFromFile("Pictures/RaisinWalk.png")){
+		printf("failed to load walking raisin texture\n");
+		success = false;	
 	}	
-	
 	return success;
 }
 

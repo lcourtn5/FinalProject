@@ -56,6 +56,7 @@ LTexture gDogTexture;
 LTexture menu;
 LTexture credits;
 LTexture cat;
+LTexture DogJump;
 
 bool init() {
 	//Initialization flag
@@ -126,7 +127,11 @@ bool loadMedia(string file) {
 	if(!cat.loadFromFile("cat.png")){
 		printf("failed to load cat texture\n");
 		success = false;
-	}		
+	}	
+	if(!DogJump.loadFromFile("RaisinJumping.png")){
+		printf("failed to load jump texture\n");
+		success = false;
+	}	
 	
 	return success;
 }

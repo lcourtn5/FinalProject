@@ -11,13 +11,24 @@ int WindowWidth, WindowHeight;
 map<string, string> myTextures;
 string textureName;
 
+class Cat{
+	public:
+		static const int CAT_WIDTH = 20;
+		static const int DOG_HEIGHT = 20;
+		
+		Cat();
+		void moveCat();
+		void render();
+	private:
+		int mPosX, mPosY;
+};	
+
 class Dog{
 	public:
 		static const int DOG_WIDTH = 20;
 		static const int DOG_HEIGHT = 20;
 	
 		Dog();
-		void handleEvent(SDL_Event& e);
 		void jump();
 		void render();
 	private:
@@ -28,6 +39,7 @@ void PlayGame(){
 	bool back = 0;
 	SDL_Event e;
 	Dog Raisin;	
+	Cat cat1;
 	
 	WindowWidth = 1230;
 	WindowHeight = 846;
@@ -39,6 +51,7 @@ void PlayGame(){
 	gBGTexture.render(0,0);
 	
 	Raisin.render();
+	cat1.render();
 	SDL_RenderPresent(gRenderer);	
 		
 	
@@ -56,8 +69,8 @@ void PlayGame(){
 						//Back to menu
 						textureName = "menu";
 						
-						WindowWidth = 1112;
-						WindowHeight = 790;
+						WindowWidth = 1099;
+						WindowHeight = 780;
 						SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
 						SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 						SDL_RenderClear(gRenderer);
@@ -108,8 +121,8 @@ int main(int argc, char* argv[]) {
 						SDL_GetMouseState(&x, &y);
 
 						//Check if mouse if in the play button
-						if(x < 680 && x > 418) {
-							if(y < 555 && y > 460) {
+						if(x < 672 && x > 411) {
+							if(y < 550 && y > 462) {
 								x = 0;
 								y = 0;
 								PlayGame();
@@ -117,15 +130,15 @@ int main(int argc, char* argv[]) {
 						}
 
 						//Check if mouse is in the credits button
-						if(x < 680 && x > 418) {
-							if(y < 665 && y > 575) {
+						if(x < 672 && x > 411) {
+							if(y < 660 && y > 570) {
 								x = 0;
 								y = 0;
 								//Credits
 								textureName = "credits";
 								
-								WindowWidth = 1401;
-								WindowHeight = 790;
+								WindowWidth = 1395;
+								WindowHeight = 781;
 								SDL_SetWindowSize(gWindow,WindowWidth,WindowHeight);
 								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 								SDL_RenderClear(gRenderer);
@@ -135,8 +148,8 @@ int main(int argc, char* argv[]) {
 						}
 
 						//Check if mouse is in the exit button
-						if(x < 680 && x > 418) {
-							if(y < 776 && y > 690) {
+						if(x < 672 && x > 411) {
+							if(y < 773 && y > 687) {
 								quit = true;
 							}
 						}
@@ -154,8 +167,8 @@ int main(int argc, char* argv[]) {
 								//Back to menu
 								textureName = "menu";
 								
-								WindowWidth = 1112;
-								WindowHeight = 790;								
+								WindowWidth = 1099;
+								WindowHeight = 780;								
 								SDL_SetWindowSize(gWindow,WindowWidth,WindowHeight);
 								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 								SDL_RenderClear(gRenderer);
@@ -180,7 +193,7 @@ int main(int argc, char* argv[]) {
 
 Dog::Dog(){
 	mPosX = 0;
-	mPosY = 0;
+	mPosY = 662;
 }
 
 void Dog::jump(){
@@ -189,5 +202,18 @@ void Dog::jump(){
 
 void Dog::render(){
 	gDogTexture.render(mPosX, mPosY);
+}
+
+Cat::Cat(){
+	mPosX = 300;
+	mPosY = 662;
+}
+
+void Cat::moveCat(){
+
+}
+
+void Cat::render(){
+	cat.render(mPosX, mPosY);
 }
 

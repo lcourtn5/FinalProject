@@ -5,8 +5,8 @@
 
 using namespace std;
 
-const int SCREEN_WIDTH = 1112;
-const int SCREEN_HEIGHT = 790;
+const int SCREEN_WIDTH = 1099;
+const int SCREEN_HEIGHT = 780;
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -55,7 +55,7 @@ LTexture gBGTexture;
 LTexture gDogTexture;
 LTexture menu;
 LTexture credits;
-
+LTexture cat;
 
 bool init() {
 	//Initialization flag
@@ -120,6 +120,11 @@ bool loadMedia(string file) {
 	
 	if(!gDogTexture.loadFromFile("RaisinFullBody.png")){
 		printf("failed to load dog texture\n");
+		success = false;
+	}
+	
+	if(!cat.loadFromFile("cat.png")){
+		printf("failed to load cat texture\n");
 		success = false;
 	}		
 	

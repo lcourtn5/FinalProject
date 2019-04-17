@@ -6,34 +6,42 @@
 
 using namespace std;
 
+int WindowWidth, WindowHeight;
+
 map<string, string> myTextures;
 string textureName;
 
-void windowUpdate() {
-	//Load media
-	if(!loadMedia(myTextures[textureName])) {
-		printf("Failed to load media!\n");
-	}
-	gCurrentSurface = loadSurface(myTextures[textureName]);
-
-	//Apply the image
-	SDL_Rect stretchRect;
-	stretchRect.x = 0;
-	stretchRect.y = 0;
-	stretchRect.w = SCREEN_WIDTH;
-	stretchRect.h = SCREEN_HEIGHT;
-	SDL_BlitScaled(gCurrentSurface, NULL, gScreenSurface, &stretchRect);
-
-	//Update the surface
-	SDL_UpdateWindowSurface(gWindow);
-}
+class Dog{
+	public:
+		static const int DOG_WIDTH = 20;
+		static const int DOG_HEIGHT = 20;
+	
+		Dog();
+		void handleEvent(SDL_Event& e);
+		void jump();
+		void render();
+	private:
+		int mPosX, mPosY;
+};
 
 void PlayGame(){
-	myTextures["background"] = "background.png";
-	textureName = "background";
-	windowUpdate();
 	bool back = 0;
 	SDL_Event e;
+	Dog Raisin;	
+	
+	WindowWidth = 1230;
+	WindowHeight = 846;
+	SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);
+		
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(gRenderer);
+
+	gBGTexture.render(0,0);
+	
+	Raisin.render();
+	SDL_RenderPresent(gRenderer);	
+		
+	
 	while(back != 1){
 		while(SDL_PollEvent(&e) != 0){
 			if(e.type == SDL_MOUSEBUTTONDOWN){
@@ -47,7 +55,14 @@ void PlayGame(){
 						y = 0;
 						//Back to menu
 						textureName = "menu";
-						windowUpdate();
+						
+						WindowWidth = 1112;
+						WindowHeight = 790;
+						SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
+						SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+						SDL_RenderClear(gRenderer);
+						menu.render(0,0);
+						SDL_RenderPresent(gRenderer);
 						back = 1;
 					}
 				}	
@@ -56,9 +71,9 @@ void PlayGame(){
 	}
 }
 
-
 //Main Menu
 int main(int argc, char* argv[]) {
+	
 	myTextures["menu"] = "menu.png";
 	myTextures["credits"] = "Credits.PNG";
 
@@ -71,7 +86,11 @@ int main(int argc, char* argv[]) {
 		//Load media
 		if(!loadMedia(myTextures[textureName])) {
 			printf("Failed to load media!\n");
-		} else {
+		} else {		
+			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+			SDL_RenderClear(gRenderer);
+			menu.render(0,0);
+			SDL_RenderPresent(gRenderer);
 			//Main loop flag
 			bool quit = false;	
 			//Event handler
@@ -89,8 +108,8 @@ int main(int argc, char* argv[]) {
 						SDL_GetMouseState(&x, &y);
 
 						//Check if mouse if in the play button
-						if(x < 779 && x > 482) {
-							if(y < 632 && y > 533) {
+						if(x < 680 && x > 418) {
+							if(y < 555 && y > 460) {
 								x = 0;
 								y = 0;
 								PlayGame();
@@ -98,19 +117,26 @@ int main(int argc, char* argv[]) {
 						}
 
 						//Check if mouse is in the credits button
-						if(x < 779 && x > 482) {
-							if(y < 760 && y > 661) {
+						if(x < 680 && x > 418) {
+							if(y < 665 && y > 575) {
 								x = 0;
 								y = 0;
 								//Credits
 								textureName = "credits";
-								windowUpdate();
+								
+								WindowWidth = 1401;
+								WindowHeight = 790;
+								SDL_SetWindowSize(gWindow,WindowWidth,WindowHeight);
+								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+								SDL_RenderClear(gRenderer);
+								credits.render(0,0);
+								SDL_RenderPresent(gRenderer);
 							}
 						}
 
 						//Check if mouse is in the exit button
-						if(x < 779 && x > 482) {
-							if(y < 887 && y > 788) {
+						if(x < 680 && x > 418) {
+							if(y < 776 && y > 690) {
 								quit = true;
 							}
 						}
@@ -127,36 +153,41 @@ int main(int argc, char* argv[]) {
 								y = 0;
 								//Back to menu
 								textureName = "menu";
-								windowUpdate();
+								
+								WindowWidth = 1112;
+								WindowHeight = 790;								
+								SDL_SetWindowSize(gWindow,WindowWidth,WindowHeight);
+								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+								SDL_RenderClear(gRenderer);
+								menu.render(0,0);
+								SDL_RenderPresent(gRenderer);
 							}
 						}
 					}
-					
-					gCurrentSurface = loadSurface(myTextures[textureName]);
 				}
-
-				//Apply the image
-				SDL_Rect stretchRect;
-				stretchRect.x = 0;
-				stretchRect.y = 0;
-				stretchRect.w = SCREEN_WIDTH;
-				stretchRect.h = SCREEN_HEIGHT;
-				SDL_BlitScaled(gCurrentSurface, NULL, gScreenSurface, &stretchRect);
-
-				//Update the surface
-				SDL_UpdateWindowSurface(gWindow);
 			}
 		}
 	}
 
 	//Free resources
-	close(gCurrentSurface);
-
-	SDL_DestroyWindow(gWindow);
-	gWindow = NULL;
+	close();
 
 
 	SDL_Quit();
 
 	return 0;
 }
+
+Dog::Dog(){
+	mPosX = 0;
+	mPosY = 0;
+}
+
+void Dog::jump(){
+	
+}
+
+void Dog::render(){
+	gDogTexture.render(mPosX, mPosY);
+}
+

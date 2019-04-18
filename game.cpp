@@ -137,8 +137,12 @@ void PlayGame(){
 							SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 							SDL_RenderClear(gRenderer);
 							menu.render(0,0);
-							MusicOn.render(0,0);
-							Mix_PlayMusic(MenuMusic,-1);
+							if(Mix_PausedMusic() == 1){
+								MusicOff.render(0,0);
+							}	
+							else{
+								MusicOn.render(0,0);
+							}
 							SDL_RenderPresent(gRenderer);
 							back = 1;
 							
@@ -152,6 +156,7 @@ void PlayGame(){
 					if(hasjump == 0){
 						jump = 1;
 						hasjump = 1;
+					//	Mix_PlayChannel(-1,JumpMusic, 0);
 					}
 				}
 			}
@@ -231,8 +236,12 @@ void PlayGame(){
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
-									MusicOn.render(0,0);
-									Mix_PlayMusic(MenuMusic,-1);
+									if(Mix_PausedMusic() == 1){
+										MusicOff.render(0,0);
+									}	
+									else{
+										MusicOn.render(0,0);
+									}
 									SDL_RenderPresent(gRenderer);
 									
 									TTF_CloseFont(Sans);								
@@ -387,8 +396,12 @@ void PlayGame(){
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
-									MusicOn.render(0,0);
-									Mix_PlayMusic(MenuMusic,-1);
+									if(Mix_PausedMusic() == 1){
+										MusicOff.render(0,0);
+									}	
+									else{
+										MusicOn.render(0,0);
+									}
 									SDL_RenderPresent(gRenderer);
 								
 									TTF_CloseFont(Sans);								
@@ -454,8 +467,12 @@ void PlayGame(){
 								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 								SDL_RenderClear(gRenderer);
 								menu.render(0,0);
-								MusicOn.render(0,0);
-								Mix_PlayMusic(MenuMusic,-1);
+								if(Mix_PausedMusic() == 1){
+									MusicOff.render(0,0);
+								}	
+								else{
+									MusicOn.render(0,0);
+								}
 								SDL_RenderPresent(gRenderer);
 								
 								TTF_CloseFont(Sans);								
@@ -517,7 +534,6 @@ int main(int argc, char* argv[]) {
 							if(y < 550 && y > 462) {
 								x = 0;
 								y = 0;
-								Mix_HaltMusic();
 								PlayGame();
 							}
 						}

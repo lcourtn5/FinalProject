@@ -206,6 +206,12 @@ bool loadMedia(string file) {
 		printf("failed to load music off texture\n");
 		success = false;
 	}
+	
+	JumpMusic = Mix_LoadWAV("Bark.mp3");
+	if(JumpMusic == NULL){
+		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}	
 		
 	return success;
 }
@@ -233,7 +239,8 @@ void close() {
 	Bone.free();
 	Mix_FreeMusic(MenuMusic);
 	MenuMusic = NULL;
-	
+	Mix_FreeChunk(JumpMusic);
+	JumpMusic = NULL;	
 	SDL_DestroyTexture(Message);
 	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyRenderer (gRenderer);

@@ -18,7 +18,7 @@ class Cat{
 		static const int CAT_HEIGHT = 180;
 		
 		Cat();
-		void moveCat(bool & reset, int score);
+		void moveCat(bool & reset, int & score);
 		void render(int cat);
 		void setX(int x);
 		int getX();
@@ -35,8 +35,11 @@ class Dog{
 		bool checkCatPos(Cat cat, bool jump);
 		void jumpDog();
 		void downDog();
+		void setX(int x);
 		int getY();
+		int getX();
 		void bark();
+		void moveRight();
 		void render(int & timer);
 		void renderJump();
 	private:
@@ -44,10 +47,11 @@ class Dog{
 };
 
 void PlayGame(){
-	TTF_Font* Sans = TTF_OpenFont("Font.ttf", 24);
+	TTF_Font* Sans = TTF_OpenFont("Font.ttf", 40);
 	SDL_Color White = {255,255,255};
 	string scoreText;
 	scoreText = "Score: ";
+	bool retry = 0;
 	int score = 0;
 	int time = 0;
 	int scrollingOffset = 0;
@@ -77,17 +81,17 @@ void PlayGame(){
 	//render background
 	gBGTexture.render(0,0);
 	OKButton.render(575, 550);
-	BeginPrompt.render(265,320);
+	BeginPrompt.render(265,240);
 	BackButton.render(-10,-10);
 	
-	scoreText += "0";
+	scoreText += to_string(score);
 	
 	//render surface for text
 	surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
 	Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
 	
 	SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
-	MessageRect.x = 1230 - MessageRect.w;
+	MessageRect.x = 1220 - MessageRect.w;
 	MessageRect.y = 0;
 	
 	//renders text
@@ -112,6 +116,7 @@ void PlayGame(){
 		//determines if the user has selected ok yet
 		if(play == 1){			
 			while(SDL_PollEvent(&e) != 0){
+				retry = 0;
 				//if mouse is pressed it determines if it was in the back button area
 				if(e.type == SDL_MOUSEBUTTONDOWN){
 					int x, y;
@@ -139,8 +144,10 @@ void PlayGame(){
 					}	
 				//if any key is pressed Raisin jumps
 				} else if(e.type == SDL_KEYDOWN){
-					jump = 1;
-					hasjump = 1;
+					if(hasjump == 0){
+						jump = 1;
+						hasjump = 1;
+					}
 				}
 			}
 			
@@ -175,44 +182,209 @@ void PlayGame(){
 			//determines if someone has lost the game
 			cat1Lose = Raisin.checkCatPos(cat1, hasjump);
 			cat2Lose = Raisin.checkCatPos(cat2, hasjump);
-
+			
 			if(cat1Lose == true || cat2Lose == true){
-				WindowWidth = 1099;
-				WindowHeight = 780;
-				SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
+				SDL_SetRenderDrawColor(gRenderer, 0xFF,0xFF,0xFF,0xFF);
+				SDL_RenderClear(gRenderer);
+				gBGTexture.render(0,0);
+				BackButton.render(-10,-10);
+				Raisin.render(time);
+				LosePrompt.render(335, 150);
+				MainButton.render(501, 475);
+				RetryButton.render(540, 575);
+				
+				scoreText += to_string(score);
+
+				//render surface for text
+				surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
+				Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
+
+				SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
+				MessageRect.x = 1220 - MessageRect.w;
+				MessageRect.y = 0;
+
+				//renders text
+				SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
+
+				SDL_RenderPresent(gRenderer);
+				scoreText = "Score: ";	
+				while(retry == 0){
+					while(SDL_PollEvent(&e) != 0){
+						//if mouse is pressed it determines if it was in the back button area
+						if(e.type == SDL_MOUSEBUTTONDOWN){
+							int x, y;
+							SDL_GetMouseState(&x, &y);
+
+							//check if mouse is in back button
+							if((x < 729 && x > 501) || (x < 100 && x > 0)){
+								if((y < 533 && y > 475) || (y < 100 && y > 0)){
+									x = 0;
+									y = 0;
+									WindowWidth = 1099;
+									WindowHeight = 780;
+									SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
+									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+									SDL_RenderClear(gRenderer);
+									menu.render(0,0);
+									SDL_RenderPresent(gRenderer);
+									return;
+								}
+							}
+							
+							if(x < 689  && x > 540){
+								if(y < 633  && y > 575){
+									retry = 1;
+									score = 0;
+									cat1.setX(500);
+									cat2.setX(1100);
+								}
+							}
+						}
+					}
+				}
+			}
+			if(score < 100){	
+				//makes the background move
+				--scrollingOffset;
+				if(scrollingOffset < -gBGTexture.getWidth()){
+					scrollingOffset = 0;
+				}	
+
+				//render new screen
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
-				menu.render(0,0);
+
+				gBGTexture.render(scrollingOffset,0);
+				gBGTexture.render(scrollingOffset + gBGTexture.getWidth(), 0);
+				BackButton.render(-10,-10);		
+
+				//gives illusion of dog moving
+				if(DogY == 662){
+					Raisin.render(time);
+				}
+				else{
+					Raisin.renderJump();
+				}
+
+
+				scoreText += to_string(score);
+
+				//render surface for text
+				surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
+				Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
+
+				SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
+				MessageRect.x = 1220 - MessageRect.w;
+				MessageRect.y = 0;
+
+				//renders text
+				SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
+
+				scoreText = "Score: ";	
+				//render cat
+				cat1.render(cat1num);
+				cat2.render(cat2num);
 				SDL_RenderPresent(gRenderer);
-				return;
-			}
-			
-			//makes the background move
-			--scrollingOffset;
-			if(scrollingOffset < -gBGTexture.getWidth()){
-				scrollingOffset = 0;
+			} else{
+				while(Raisin.getX() < 300){
+					Raisin.moveRight();
+					
+					//makes the background move
+					--scrollingOffset;
+					if(scrollingOffset < -gBGTexture.getWidth()){
+						scrollingOffset = 0;
+					}	
+
+					//render new screen
+					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+					SDL_RenderClear(gRenderer);
+
+					gBGTexture.render(scrollingOffset,0);
+					gBGTexture.render(scrollingOffset + gBGTexture.getWidth(), 0);
+					BackButton.render(-10,-10);		
+
+					Raisin.render(time);
+					
+					WinImage.render(393,151);
+					MainButton.render(501, 530);				
+	
+					Bone.render(550,725);
+
+					scoreText += "100";
+
+					//render surface for text
+					surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
+					Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
+
+					SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
+					MessageRect.x = 1220 - MessageRect.w;
+					MessageRect.y = 0;
+
+					//renders text
+					SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
+
+					scoreText = "Score: ";	
+					SDL_RenderPresent(gRenderer);
+				}
+				back = 0;
+				while(back == 0){
+					//render new screen
+					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+					SDL_RenderClear(gRenderer);
+
+					gBGTexture.render(0,0);
+					BackButton.render(-10,-10);		
+
+					Raisin.render(time);
+
+					Bone.render(550,725);
+
+					WinImage.render(393,151);
+					MainButton.render(501, 530);
+
+					scoreText += "100";
+
+					//render surface for text
+					surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
+					Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
+
+					SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
+					MessageRect.x = 1220 - MessageRect.w;
+					MessageRect.y = 0;
+
+					//renders text
+					SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
+
+					scoreText = "Score: ";	
+					SDL_RenderPresent(gRenderer);
+
+					while(SDL_PollEvent(&e) != 0){
+						if(e.type == SDL_MOUSEBUTTONDOWN){
+							int x, y;
+							SDL_GetMouseState(&x, &y);
+
+							if((x < 729 && x > 501) || (x < 100 && x > 0)){
+								if((y < 588 && y > 530) || (y < 100 && y > 0)){
+
+									x = 0;
+									y = 0;
+									//Back to menu
+									textureName = "menu";
+
+									WindowWidth = 1099;
+									WindowHeight = 780;
+									SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
+									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+									SDL_RenderClear(gRenderer);
+									menu.render(0,0);
+									SDL_RenderPresent(gRenderer);
+									return;
+								}
+							}
+						}			
+					}
+				}	
 			}	
-
-			//render new screen
-			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-			SDL_RenderClear(gRenderer);
-
-			gBGTexture.render(scrollingOffset,0);
-			gBGTexture.render(scrollingOffset + gBGTexture.getWidth(), 0);
-			BackButton.render(-10,-10);		
-			
-			//gives illusion of dog moving
-			if(DogY == 662){
-				Raisin.render(time);
-			}
-			else{
-				Raisin.renderJump();
-			}
-			
-			//render cat
-			cat1.render(cat1num);
-			cat2.render(cat2num);
-			SDL_RenderPresent(gRenderer);	
 		//if user has not selected ok yet
 		}else {
 			while(SDL_PollEvent(&e) != 0){
@@ -230,6 +402,22 @@ void PlayGame(){
 							SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 							SDL_RenderClear(gRenderer);
 
+
+							scoreText += to_string(score);
+
+							//render surface for text
+							surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
+							Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
+
+							SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
+							MessageRect.x = 1220 - MessageRect.w;
+							MessageRect.y = 0;
+
+							//renders text
+							SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
+
+							scoreText = "Score: ";	
+							
 							gBGTexture.render(0,0);
 
 							Raisin.render(time);
@@ -376,9 +564,16 @@ Dog::Dog(){
 void Dog::bark(){
 
 }
+void Dog::setX(int x){
+	mPosX = x;
+}
 
 int Dog::getY(){
 	return mPosY;
+}
+
+int Dog::getX(){
+	return mPosX;
 }
 
 bool Dog::checkCatPos(Cat cat, bool jump ){
@@ -392,6 +587,10 @@ bool Dog::checkCatPos(Cat cat, bool jump ){
 
 void Dog::jumpDog(){
 	mPosY -= 5;
+}
+void Dog::moveRight(){
+	mPosY = 662;
+	mPosX += 10;
 }
 
 void Dog::downDog(){
@@ -434,7 +633,7 @@ int Cat::getX(){
 	return mPosX;
 }
 
-void Cat::moveCat(bool & reset, int score){
+void Cat::moveCat(bool & reset, int & score){
 	if(mPosX < -100 ){
 		mPosX = 1100;
 		reset = true;

@@ -65,7 +65,8 @@ LTexture DogJump;
 LTexture BeginPrompt;
 LTexture OKButton;
 LTexture BackButton;
-LTexture RaisinWalk;
+LTexture RaisinWalk, WinImage;
+LTexture LosePrompt, MainButton, RetryButton, Bone;
 
 
 bool init() {
@@ -163,6 +164,27 @@ bool loadMedia(string file) {
 		printf("failed to load walking raisin texture\n");
 		success = false;	
 	}	
+
+	if(!LosePrompt.loadFromFile("Pictures/LosePrompt.png")){
+		printf("failed to Lose Prompt texture\n");
+		success = false;	
+	}	
+	if(!MainButton.loadFromFile("Pictures/MainButton.png")){
+		printf("failed to Main Button texture\n");
+		success = false;	
+	}	
+	if(!RetryButton.loadFromFile("Pictures/RetryButton.png")){
+		printf("failed to Retry Button texture\n");
+		success = false;	
+	}	
+	if(!Bone.loadFromFile("Pictures/Bone.png")){
+		printf("failed to load Bone texture\n");
+		success = false;
+	}
+	if(!WinImage.loadFromFile("Pictures/WinImage.png")){
+		printf("failed to load Win Image texture\n");
+		success = false;
+	}		
 	return success;
 }
 

@@ -139,6 +139,9 @@ void PlayGame(){
 							menu.render(0,0);
 							SDL_RenderPresent(gRenderer);
 							back = 1;
+							
+							TTF_CloseFont(Sans);								
+
 							return;
 						}
 					}	
@@ -227,6 +230,9 @@ void PlayGame(){
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
 									SDL_RenderPresent(gRenderer);
+									
+									TTF_CloseFont(Sans);								
+
 									return;
 								}
 							}
@@ -378,6 +384,9 @@ void PlayGame(){
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
 									SDL_RenderPresent(gRenderer);
+								
+									TTF_CloseFont(Sans);								
+									
 									return;
 								}
 							}
@@ -440,6 +449,9 @@ void PlayGame(){
 								SDL_RenderClear(gRenderer);
 								menu.render(0,0);
 								SDL_RenderPresent(gRenderer);
+								
+								TTF_CloseFont(Sans);								
+
 								return;
 							}
 						}

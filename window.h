@@ -194,8 +194,20 @@ void close() {
 	gDogTexture.free();
 	credits.free();
 	menu.free();
+	for(int i = 0; i < cats.size(); i++){
+		cats[i].free();
+	}	
+	DogJump.free();
+	BeginPrompt.free();
+	OKButton.free();
+	BackButton.free();
+	RaisinWalk.free();
+	WinImage.free();
+	LosePrompt.free();
+	MainButton.free();
+	RetryButton.free();
+	Bone.free();
 	
-//	TTF_CloseFont(Sans);	
 	SDL_DestroyTexture(Message);
 	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyRenderer (gRenderer);

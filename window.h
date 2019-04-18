@@ -22,6 +22,8 @@ SDL_Surface * surfaceMessage;
 SDL_Texture * Message;
 SDL_Rect MessageRect;
 
+Mix_Music *MenuMusic = NULL;
+Mix_Chunk *JumpMusic = NULL;
 
 class LTexture{
         public:
@@ -64,7 +66,7 @@ vector<LTexture> cats;
 LTexture DogJump;
 LTexture BeginPrompt;
 LTexture OKButton;
-LTexture BackButton;
+LTexture BackButton, MusicOn, MusicOff;
 LTexture RaisinWalk, WinImage;
 LTexture LosePrompt, MainButton, RetryButton, Bone;
 
@@ -104,6 +106,11 @@ bool init() {
 				} else {
 					//Get window surface
 					gScreenSurface = SDL_GetWindowSurface(gWindow);
+				}
+
+				if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0){
+					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+					success = false;
 				}
 			}
 		}
@@ -184,7 +191,22 @@ bool loadMedia(string file) {
 	if(!WinImage.loadFromFile("Pictures/WinImage.png")){
 		printf("failed to load Win Image texture\n");
 		success = false;
-	}		
+	}
+	
+	MenuMusic = Mix_LoadMUS("DogSong.mp3");
+	if(MenuMusic == NULL){
+		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}
+	if(!MusicOn.loadFromFile("Pictures/MusicOn.png")){
+		printf("failed to load music on texture\n");
+		success = false;
+	}	
+	if(!MusicOff.loadFromFile("Pictures/MusicOff.png")){
+		printf("failed to load music off texture\n");
+		success = false;
+	}
+		
 	return success;
 }
 
@@ -197,6 +219,8 @@ void close() {
 	for(int i = 0; i < cats.size(); i++){
 		cats[i].free();
 	}	
+	MusicOn.free();
+	MusicOff.free();
 	DogJump.free();
 	BeginPrompt.free();
 	OKButton.free();
@@ -207,6 +231,8 @@ void close() {
 	MainButton.free();
 	RetryButton.free();
 	Bone.free();
+	Mix_FreeMusic(MenuMusic);
+	MenuMusic = NULL;
 	
 	SDL_DestroyTexture(Message);
 	SDL_FreeSurface(surfaceMessage);

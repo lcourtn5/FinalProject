@@ -137,6 +137,8 @@ void PlayGame(){
 							SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 							SDL_RenderClear(gRenderer);
 							menu.render(0,0);
+							MusicOn.render(0,0);
+							Mix_PlayMusic(MenuMusic,-1);
 							SDL_RenderPresent(gRenderer);
 							back = 1;
 							
@@ -229,6 +231,8 @@ void PlayGame(){
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
+									MusicOn.render(0,0);
+									Mix_PlayMusic(MenuMusic,-1);
 									SDL_RenderPresent(gRenderer);
 									
 									TTF_CloseFont(Sans);								
@@ -383,6 +387,8 @@ void PlayGame(){
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
+									MusicOn.render(0,0);
+									Mix_PlayMusic(MenuMusic,-1);
 									SDL_RenderPresent(gRenderer);
 								
 									TTF_CloseFont(Sans);								
@@ -448,6 +454,8 @@ void PlayGame(){
 								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 								SDL_RenderClear(gRenderer);
 								menu.render(0,0);
+								MusicOn.render(0,0);
+								Mix_PlayMusic(MenuMusic,-1);
 								SDL_RenderPresent(gRenderer);
 								
 								TTF_CloseFont(Sans);								
@@ -481,11 +489,16 @@ int main(int argc, char* argv[]) {
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
 			menu.render(0,0);
+			MusicOn.render(0,0);
 			SDL_RenderPresent(gRenderer);
 			//Main loop flag
 			bool quit = false;	
 			//Event handler
 			SDL_Event e;
+			if(Mix_PlayingMusic() == 0){
+				Mix_PlayMusic(MenuMusic, -1);
+				MusicOn.render(0,0);
+			}
 			while(!quit) {
 				//Handle events on queue
 				while(SDL_PollEvent(&e) != 0) {
@@ -493,7 +506,8 @@ int main(int argc, char* argv[]) {
 					if(e.type == SDL_QUIT) {
 						quit = true;
 					//User clicks the mouse down in the menu
-					} else if((e.type == SDL_MOUSEBUTTONDOWN) && textureName == "menu") {
+					}
+					 else if((e.type == SDL_MOUSEBUTTONDOWN) && textureName == "menu") {
 						//Get mouse position
 						int x, y;
 						SDL_GetMouseState(&x, &y);
@@ -503,6 +517,7 @@ int main(int argc, char* argv[]) {
 							if(y < 550 && y > 462) {
 								x = 0;
 								y = 0;
+								Mix_HaltMusic();
 								PlayGame();
 							}
 						}
@@ -521,6 +536,12 @@ int main(int argc, char* argv[]) {
 								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 								SDL_RenderClear(gRenderer);
 								credits.render(0,0);
+								if(Mix_PausedMusic() == 1){
+									MusicOff.render(0,0);
+								}	
+								else{
+									MusicOn.render(0,0);
+								}
 								SDL_RenderPresent(gRenderer);
 							}
 						}
@@ -529,6 +550,30 @@ int main(int argc, char* argv[]) {
 						if(x < 672 && x > 411) {
 							if(y < 773 && y > 687) {
 								quit = true;
+							}
+						}
+						
+						//check if mouse in on music button
+						if(x < 100 && x > 0){
+							if(y < 100 && y > 0){
+								if(Mix_PausedMusic() == 1){
+									Mix_ResumeMusic();
+										
+									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+									SDL_RenderClear(gRenderer);
+									menu.render(0,0);
+									MusicOn.render(0,0);
+									SDL_RenderPresent(gRenderer);
+								}
+								else{
+									Mix_PauseMusic();
+									
+									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+									SDL_RenderClear(gRenderer);
+									menu.render(0,0);
+									MusicOff.render(0,0);
+									SDL_RenderPresent(gRenderer);
+								}
 							}
 						}
 					//User clicks the mouse down in credits
@@ -551,9 +596,40 @@ int main(int argc, char* argv[]) {
 								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 								SDL_RenderClear(gRenderer);
 								menu.render(0,0);
+								if(Mix_PausedMusic() == 1){
+									MusicOff.render(0,0);
+								}
+								else{
+									MusicOn.render(0,0);
+								}
 								SDL_RenderPresent(gRenderer);
 							}
 						}
+
+						//check if mouse is on music button
+						if(x < 100 && x > 0){
+							if(y < 100 && y > 0){
+								if(Mix_PausedMusic() == 1){
+									Mix_ResumeMusic();
+										
+									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+									SDL_RenderClear(gRenderer);
+									credits.render(0,0);
+									MusicOn.render(0,0);
+									SDL_RenderPresent(gRenderer);
+								}
+								else{
+									Mix_PauseMusic();
+									
+									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+									SDL_RenderClear(gRenderer);
+									credits.render(0,0);
+									MusicOff.render(0,0);
+									SDL_RenderPresent(gRenderer);
+								}
+							}
+						}
+					
 					}
 				}
 			}
@@ -562,8 +638,9 @@ int main(int argc, char* argv[]) {
 
 	//Free resources
 	close();
-
-
+	
+	Mix_Quit();
+	IMG_Quit();
 	SDL_Quit();
 	TTF_Quit();
 	return 0;

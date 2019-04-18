@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <cstdlib>
+#include <iostream>
 using namespace std;
 
 int WindowWidth, WindowHeight;
@@ -17,7 +18,7 @@ class Cat{
 		static const int CAT_HEIGHT = 180;
 		
 		Cat();
-		void moveCat(bool & reset);
+		void moveCat(bool & reset, int score);
 		void render(int cat);
 		void setX(int x);
 		int getX();
@@ -43,6 +44,11 @@ class Dog{
 };
 
 void PlayGame(){
+	TTF_Font* Sans = TTF_OpenFont("Font.ttf", 24);
+	SDL_Color White = {255,255,255};
+	string scoreText;
+	scoreText = "Score: ";
+	int score = 0;
 	int time = 0;
 	int scrollingOffset = 0;
 	bool play = 0;
@@ -56,34 +62,57 @@ void PlayGame(){
 	Dog Raisin;	
 	Cat cat1, cat2;
 	bool cat1Lose = false, cat2Lose = false;
-				
+					
 	cat2.setX(1100);
-
+	
+	//resize window
 	WindowWidth = 1230;
 	WindowHeight = 840;
 	SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);
 		
+	//reset renderer
 	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
-
+	
+	//render background
 	gBGTexture.render(0,0);
 	OKButton.render(575, 550);
 	BeginPrompt.render(265,320);
 	BackButton.render(-10,-10);
-		
-	Raisin.render(time);
 	
+	scoreText += "0";
+	
+	//render surface for text
+	surfaceMessage = TTF_RenderText_Solid(Sans, scoreText.c_str(), White);
+	Message = SDL_CreateTextureFromSurface(gRenderer, surfaceMessage);	
+	
+	SDL_QueryTexture(Message, NULL, NULL, &MessageRect.w, &MessageRect.h);
+	MessageRect.x = 1230 - MessageRect.w;
+	MessageRect.y = 0;
+	
+	//renders text
+	SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
+
+	scoreText = "Score: ";	
+		
+	//render raisin
+	Raisin.render(time);
+		
+	//determines which color cat
 	cat1num = rand() % 3;	
 	cat2num = rand() % 3;
-
+	
+	//renders cat
 	cat1.render(cat1num);
 	cat2.render(cat2num);
 	SDL_RenderPresent(gRenderer);	
 		
 	
 	while(back != 1){
+		//determines if the user has selected ok yet
 		if(play == 1){			
 			while(SDL_PollEvent(&e) != 0){
+				//if mouse is pressed it determines if it was in the back button area
 				if(e.type == SDL_MOUSEBUTTONDOWN){
 					int x, y;
 					SDL_GetMouseState(&x, &y);
@@ -95,7 +124,8 @@ void PlayGame(){
 							y = 0;
 							//Back to menu
 							textureName = "menu";
-
+							
+							//renders main menu
 							WindowWidth = 1099;
 							WindowHeight = 780;
 							SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
@@ -107,12 +137,14 @@ void PlayGame(){
 							return;
 						}
 					}	
+				//if any key is pressed Raisin jumps
 				} else if(e.type == SDL_KEYDOWN){
 					jump = 1;
 					hasjump = 1;
 				}
 			}
-
+			
+			//makes Raisin jump
 			DogY = Raisin.getY();	
 			if(jump == 1 && DogY > 450){
 				Raisin.jumpDog();
@@ -125,9 +157,11 @@ void PlayGame(){
 				}
 			} 
 
-			cat1.moveCat(resetcat1);
-			cat2.moveCat(resetcat2);
+			//moves the cat and determines if the cat was reset to right side
+			cat1.moveCat(resetcat1, score);
+			cat2.moveCat(resetcat2, score);
 			
+			//if cat was reset it determines new color
 			if(resetcat1 == true){
 				cat1num = rand() % 3;
 				resetcat1 = false;
@@ -137,7 +171,8 @@ void PlayGame(){
 				cat2num = rand() % 3;
 				resetcat2 = false;
 			}		
-
+	
+			//determines if someone has lost the game
 			cat1Lose = Raisin.checkCatPos(cat1, hasjump);
 			cat2Lose = Raisin.checkCatPos(cat2, hasjump);
 
@@ -152,27 +187,33 @@ void PlayGame(){
 				return;
 			}
 			
+			//makes the background move
 			--scrollingOffset;
 			if(scrollingOffset < -gBGTexture.getWidth()){
 				scrollingOffset = 0;
 			}	
 
+			//render new screen
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
 
 			gBGTexture.render(scrollingOffset,0);
 			gBGTexture.render(scrollingOffset + gBGTexture.getWidth(), 0);
 			BackButton.render(-10,-10);		
-
+			
+			//gives illusion of dog moving
 			if(DogY == 662){
 				Raisin.render(time);
 			}
 			else{
 				Raisin.renderJump();
 			}
+			
+			//render cat
 			cat1.render(cat1num);
 			cat2.render(cat2num);
 			SDL_RenderPresent(gRenderer);	
+		//if user has not selected ok yet
 		}else {
 			while(SDL_PollEvent(&e) != 0){
 				if(e.type == SDL_MOUSEBUTTONDOWN){
@@ -324,7 +365,7 @@ int main(int argc, char* argv[]) {
 
 
 	SDL_Quit();
-
+	TTF_Quit();
 	return 0;
 }
 
@@ -363,6 +404,7 @@ void Dog::downDog(){
 }
 
 void Dog::render(int & timer){
+	//determines which picture to render
 	if(timer < 10){
 		gDogTexture.render(mPosX, mPosY);
 		timer++;
@@ -392,10 +434,11 @@ int Cat::getX(){
 	return mPosX;
 }
 
-void Cat::moveCat(bool & reset){
+void Cat::moveCat(bool & reset, int score){
 	if(mPosX < -100 ){
 		mPosX = 1100;
 		reset = true;
+		score += 10;
 	}
 	else{
 		mPosX -= 5;

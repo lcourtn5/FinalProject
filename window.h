@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <SDL2_ttf/SDL_ttf.h>
+#include <SDL2_mixer/SDL_mixer.h>
 using namespace std;
 
 const int SCREEN_WIDTH = 1099;
@@ -16,6 +18,9 @@ SDL_Surface* gScreenSurface = NULL;
 
 SDL_Renderer* gRenderer = NULL;
 
+SDL_Surface * surfaceMessage;
+SDL_Texture * Message;
+SDL_Rect MessageRect;
 
 
 class LTexture{
@@ -72,6 +77,7 @@ bool init() {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;
 	} else {
+		TTF_Init();	
 		//Create window
 		gWindow = SDL_CreateWindow("Raisin Run", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		
@@ -165,8 +171,11 @@ void close() {
 	gBGTexture.free();
 	gDogTexture.free();
 	credits.free();
-	menu.free();	
-
+	menu.free();
+	
+//	TTF_CloseFont(Sans);	
+	SDL_DestroyTexture(Message);
+	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyRenderer (gRenderer);
 	
 	//Make sure to put SDL_Quit at the end of main game

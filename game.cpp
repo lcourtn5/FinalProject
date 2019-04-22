@@ -414,7 +414,7 @@ void PlayGame(){
 				}	
 			}	
 		//if user has not selected ok yet
-		}else {
+		}else {	
 			while(SDL_PollEvent(&e) != 0){
 				if(e.type == SDL_MOUSEBUTTONDOWN){
 					int x, y;
@@ -535,6 +535,19 @@ int main(int argc, char* argv[]) {
 								x = 0;
 								y = 0;
 								PlayGame();
+								WindowWidth = 1099;
+								WindowHeight = 780;
+								SDL_SetWindowSize(gWindow, WindowWidth, WindowHeight);	
+								SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+								SDL_RenderClear(gRenderer);
+								menu.render(0,0);
+								if(Mix_PausedMusic() == 1){
+									MusicOff.render(0,0);
+								}	
+								else{
+									MusicOn.render(0,0);
+								}
+								SDL_RenderPresent(gRenderer);
 							}
 						}
 

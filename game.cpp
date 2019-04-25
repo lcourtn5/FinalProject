@@ -1,3 +1,10 @@
+/****************************
+	Raisin Run
+	
+	Written By: Megan Stanton, Jaidin Jackson, and Logan Courtney
+
+	Program Description: Contains all the functions related to the game. 
+*****************************/
 //Including needed libraries for game
 #include "window.h"
 #include <cstdio>
@@ -9,9 +16,13 @@
 #include <fstream>
 using namespace std;
 
+//used to hold the size of the window when resizing
 int WindowWidth, WindowHeight;
 
+//holds the winning names
 map<char, set<string> > Winners;
+
+//holds the name of the current screen
 map<string, string> myTextures;
 string textureName;
 
@@ -41,7 +52,6 @@ class Dog{
 		void setX(int x);
 		int getY();
 		int getX();
-		void bark();
 		void moveRight();
 		void render(int & timer);
 		void renderJump();
@@ -59,11 +69,13 @@ void WinnerScreen();
 //Main Menu
 int main(int argc, char* argv[]) {
 	
+	//adds the names of the screens to the vector
 	myTextures["menu"] = "Pictures/menu.png";
 	myTextures["credits"] = "Credits.PNG";
 
 	textureName = "menu";
 	
+	//reads in the winner names
 	ReadIn();
 	
 	//Start up SDL and create window
@@ -73,7 +85,8 @@ int main(int argc, char* argv[]) {
 		//Load media
 		if(!loadMedia(myTextures[textureName])) {
 			printf("Failed to load media!\n");
-		} else {		
+		} else {	
+			//sets up the renderer	
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
 			menu.render(0,0);
@@ -84,6 +97,7 @@ int main(int argc, char* argv[]) {
 			bool quit = false;	
 			//Event handler
 			SDL_Event e;
+			//turns on the music
 			if(Mix_PlayingMusic() == 0){
 				Mix_PlayMusic(MenuMusic, -1);
 				MusicOn.render(0,0);
@@ -141,6 +155,7 @@ int main(int argc, char* argv[]) {
 							}
 						}
 						
+						//check if mouse is in the winner button
 						if(x < 1099 && x > 828){
 							if(y < 70 && y > 0){
 								WinnerScreen();
@@ -151,9 +166,11 @@ int main(int argc, char* argv[]) {
 						//check if mouse in on music button
 						if(x < 100 && x > 0){
 							if(y < 100 && y > 0){
+								//determines what music button should be on
 								if(Mix_PausedMusic() == 1){
+								
 									Mix_ResumeMusic();
-										
+									//renders menu		
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
@@ -163,7 +180,7 @@ int main(int argc, char* argv[]) {
 								}
 								else{
 									Mix_PauseMusic();
-									
+									//renders menu
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									menu.render(0,0);
@@ -184,6 +201,7 @@ int main(int argc, char* argv[]) {
 							if(y < 768 && y > 609) {
 								x = 0;
 								y = 0;
+								//renders menu
 								ReturnMenu();
 							}
 						}
@@ -191,9 +209,11 @@ int main(int argc, char* argv[]) {
 						//check if mouse is on music button
 						if(x < 100 && x > 0){
 							if(y < 100 && y > 0){
+								//determines what music button should be on
 								if(Mix_PausedMusic() == 1){
+					
 									Mix_ResumeMusic();
-										
+									//renders credits					
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									credits.render(0,0);
@@ -202,7 +222,7 @@ int main(int argc, char* argv[]) {
 								}
 								else{
 									Mix_PauseMusic();
-									
+									//renders credits
 									SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 									SDL_RenderClear(gRenderer);
 									credits.render(0,0);
@@ -228,25 +248,28 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+//dog constructor
 Dog::Dog(){
 	mPosX = 0;
 	mPosY = 662;
 }
-void Dog::bark(){
 
-}
+//allows us to set x
 void Dog::setX(int x){
 	mPosX = x;
 }
 
+//allows us to get y
 int Dog::getY(){
 	return mPosY;
 }
 
+//allows us to get x
 int Dog::getX(){
 	return mPosX;
 }
 
+//function to check if the dog hit the cat
 bool Dog::checkCatPos(Cat cat, bool jump ){
 	if(cat.getX() < 195 && jump == 0){
 		return true;
@@ -256,14 +279,18 @@ bool Dog::checkCatPos(Cat cat, bool jump ){
 	}
 }	
 
+//causes the dog to go up
 void Dog::jumpDog(){
 	mPosY -= 5;
 }
+
+//causes the dog to go to the right once you win
 void Dog::moveRight(){
 	mPosY = 662;
 	mPosX += 10;
 }
 
+//causes the dog to go down
 void Dog::downDog(){
 	if(mPosY + 10 > 662){
 		mPosY = 662;
@@ -273,6 +300,7 @@ void Dog::downDog(){
 	}
 }
 
+//renders the correct dog depending on the time so it looks like its walking
 void Dog::render(int & timer){
 	//determines which picture to render
 	if(timer < 10){
@@ -287,23 +315,29 @@ void Dog::render(int & timer){
 		gDogTexture.render(mPosX, mPosY);
 	}
 }
+
+//renders the jumping dog
 void Dog::renderJump(){
 	DogJump.render(mPosX, mPosY);
 }
 
+//cat constructor
 Cat::Cat(){
 	mPosX = 500;
 	mPosY = 662;
 }
 
+//sets the cats x position
 void Cat::setX(int x){
 	mPosX = x;
 }
 
+//allows us to get x
 int Cat::getX(){
 	return mPosX;
 }
 
+//moves the cat to the left
 void Cat::moveCat(bool & reset, int & score){
 	if(mPosX < -100 ){
 		mPosX = 1100;
@@ -315,11 +349,13 @@ void Cat::moveCat(bool & reset, int & score){
 	}
 }
 
+//used to render the cat
 void Cat::render(int cat){
 	cats[cat].render(mPosX, mPosY);
 }
 
 
+//renders the game
 void RenderGame(bool lose, int DogY, bool begin, int &time, int &score, string &scoreText, int cat1num, int cat2num, Cat cat1, Cat cat2, Dog Raisin, TTF_Font* Sans){
 	
 	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -340,7 +376,8 @@ void RenderGame(bool lose, int DogY, bool begin, int &time, int &score, string &
 	SDL_RenderCopy(gRenderer, Message, NULL, &MessageRect);
 
 	scoreText = "Score: ";	
-
+	
+	//renders the beginning instructions if it is the beginning
 	if(begin == 1){
 		OKButton.render(575, 550);
 		BeginPrompt.render(265,240);
@@ -351,7 +388,8 @@ void RenderGame(bool lose, int DogY, bool begin, int &time, int &score, string &
 		MainButton.render(501,475);
 		RetryButton.render(540,575);
 	}
-
+	
+	//determines which dog to render
 	if(DogY == 662){
 		Raisin.render(time);
 	}
@@ -359,12 +397,13 @@ void RenderGame(bool lose, int DogY, bool begin, int &time, int &score, string &
 		Raisin.renderJump();
 	}
 	
+	//renders the correct cat
 	cat1.render(cat1num);
 	cat2.render(cat2num);
 	SDL_RenderPresent(gRenderer);	
 }
 
-
+//renders the menu
 void ReturnMenu(){
 	
 	//Back to menu
@@ -390,6 +429,7 @@ void ReturnMenu(){
 
 }
 
+//reads in the winning names
 void ReadIn(){
 	char last;
 	string first;
@@ -400,12 +440,14 @@ void ReadIn(){
 	
 }
 
+//saves the winning names before program closes
 void Save(){
 	ofstream fout;
 	fout.open("SavedWinners.txt");
 	map<char, set<string> >::iterator mit;
 	set<string>::iterator sit;
 	
+	//goes through map and adds names to file
 	for(mit = Winners.begin(); mit != Winners.end(); mit++){
 		for(sit = mit->second.begin(); sit != mit->second.end(); sit++){
 			fout << *sit << " " << mit->first << endl;
@@ -415,7 +457,9 @@ void Save(){
 	fout.close();
 }
 
+//plays the actual game
 void PlayGame(){
+	//declares variables needed
 	TTF_Font* Sans = TTF_OpenFont("Font.ttf", 40);
 	string scoreText;
 	string first;
@@ -450,6 +494,7 @@ void PlayGame(){
 	cat1num = rand() % 3;
 	cat2num = rand() % 3;
 	
+	//renders game
 	RenderGame(lose, DogY, begin, time, score, scoreText, cat1num, cat2num, cat1, cat2, Raisin, Sans);
 	begin = 0;		
 	
@@ -691,7 +736,8 @@ void PlayGame(){
 				if(e.type == SDL_MOUSEBUTTONDOWN){
 					int x, y;
 					SDL_GetMouseState(&x, &y);
-
+					
+					//if user selects the ok button
 					if(x < 655 && x > 575){
 						if(y < 625 && y > 550){
 							x = 0;
@@ -702,6 +748,7 @@ void PlayGame(){
 						
 						}
 					}else{
+						//if the user selects the back button
 						if(x < 100 && x > 0){
 							if(y < 100 && y > 0){	
 								x = 0;
@@ -717,7 +764,9 @@ void PlayGame(){
 	}
 }
 
+//renders the winner checker screen
 void WinnerScreen(){
+	//declares the variables needed
 	SDL_Event e;
 	TTF_Font* Sans = TTF_OpenFont("Font.ttf", 40);
 	bool space = 0;
@@ -727,6 +776,7 @@ void WinnerScreen(){
 	string winnerFound;
 	map<char, set<string> >::iterator mit;	
 	
+	//continues until the player selects the back button
 	while(true){
 		//resize window
 		WindowWidth = 1280;
@@ -748,7 +798,8 @@ void WinnerScreen(){
 		SDL_QueryTexture(WinText, NULL, NULL, &WinRect.w, &WinRect.h);
 		WinRect.x = 640 - (WinRect.w / 2);
 		WinRect.y = 400;
-
+	
+		//determines if the given name is in the winner map
 		mit = Winners.find(winnerL);
 		if(mit != Winners.end()){
 			if(mit->second.find(winnerFirst) != mit->second.end()){
@@ -777,10 +828,12 @@ void WinnerScreen(){
 		SDL_RenderCopy(gRenderer, WinText, NULL, &WinRect); 	
 		SDL_RenderPresent(gRenderer);
 
+		//continues until all the data have been dealt with
 		while(SDL_PollEvent(&e) != 0){
 			if(e.type == SDL_MOUSEBUTTONDOWN){
 				int x,y;
 				SDL_GetMouseState(&x,&y);
+				//if the back button is selected
 				if(x < 100 && x > 0){
 					if(y < 100 && y > 0){
 						x = 0;
@@ -790,7 +843,7 @@ void WinnerScreen(){
 					}
 				}
 			}
-
+			//handles keyboard input
 			if(e.type == SDL_KEYDOWN){
 				if(e.key.keysym.sym == SDLK_BACKSPACE && winnerFirst.length() != 0){
 					winnerFirst.pop_back();
@@ -802,6 +855,7 @@ void WinnerScreen(){
 					winnerLast.pop_back();
 				}
 			}
+			//determines if the button pressed is a letter
 			else if(e.type == SDL_TEXTINPUT){
 				if(e.text.text[0] == ' '){	
 					space = 1;

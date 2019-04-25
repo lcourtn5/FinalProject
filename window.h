@@ -18,6 +18,7 @@ SDL_Surface* gScreenSurface = NULL;
 
 SDL_Renderer* gRenderer = NULL;
 
+//declares all variables needed
 SDL_Surface * surfaceMessage;
 SDL_Texture * Message;
 SDL_Surface * surfaceWin;
@@ -29,6 +30,7 @@ SDL_Rect MessageRect;
 Mix_Music *MenuMusic = NULL;
 Mix_Chunk *JumpMusic = NULL;
 
+//saves different colors
 SDL_Color White = {255,255,255};
 SDL_Color Orange = {235,105,0};
 SDL_Color Blue = { 0, 51, 102};
@@ -66,6 +68,7 @@ class LTexture{
                 int mHeight;
 };
 
+//declare all textures needed
 LTexture gBGTexture;
 LTexture gDogTexture;
 LTexture menu;
@@ -128,6 +131,7 @@ bool init() {
 	return success;
 }
 
+//loads all pictures and music files
 bool loadMedia(string file) {
 	//Loading success flag
 	bool success = true;
@@ -210,7 +214,7 @@ bool loadMedia(string file) {
 		success = false;
 	}
 
-	
+	//load music
 	MenuMusic = Mix_LoadMUS("DogSong.mp3");
 	if(MenuMusic == NULL){
 		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
@@ -234,6 +238,7 @@ bool loadMedia(string file) {
 	return success;
 }
 
+//frees all surfaces and textures and sounds
 void close() {
 	//Deallocated surface
 	gBGTexture.free();
@@ -268,6 +273,8 @@ void close() {
 	SDL_FreeSurface(surfaceWin);
 	//Make sure to put SDL_Quit at the end of main game
 }
+
+//given to us by SDL
 
 LTexture::LTexture(){
         //Initialize

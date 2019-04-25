@@ -548,7 +548,7 @@ void PlayGame(){
 				}
 			}
 
-			if(score < 10){	
+			if(score < 100){	
 				//makes the background move
 				--scrollingOffset;
 				if(scrollingOffset < -gBGTexture.getWidth()){
